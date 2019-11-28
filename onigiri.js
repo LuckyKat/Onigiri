@@ -35,6 +35,7 @@ bento.define('onigiri/onigiri', [
     Onigiri({
         threeToPx: 128,
         pxToThree: 1,
+        gamma: 2.2,
         backgroundColor: ${1:0x70b0e4},
         camera: {
             cameraStyle: '${2:perspective}', // or orthographic
@@ -55,6 +56,8 @@ bento.define('onigiri/onigiri', [
         var perspectiveFieldOfView = cameraSettings.perspectiveFieldOfView || 45;
         var orthographicSize = cameraSettings.orthographicSize || 15;
 
+        var gamma = settings.gamma;  // if undefined, scene will use linear color space.
+
         // get references
         var viewport = Bento.getViewport();
         var ThreeData = Bento.getRenderer().three;
@@ -67,7 +70,11 @@ bento.define('onigiri/onigiri', [
             start: function (data) {
                 onigiriEntity = onigiri;
 
-                ThreeData.sceneList.unshift([onigiriScene, onigiriCamera]);
+                ThreeData.sceneList.unshift({
+                    scene: onigiriScene,
+                    camera: onigiriCamera,
+                    gamma: gamma,
+                });
                 EventSystem.on('resize', updateCamera);
                 if (isDebug) {
                     EventSystem.on('buttonDown-home', printDebug);
@@ -169,6 +176,7 @@ bento.define('onigiri/onigiri', [
 
         Onigiri.scene = onigiriScene;
         Onigiri.camera = onigiriCamera;
+        Onigiri.renderer = onigiriRenderer;
 
         // fog
         if (settings.fogColor && settings.fog) {
@@ -299,19 +307,38 @@ bento.define('onigiri/onigiri', [
     Onigiri.getMesh('${1:path}'); // calling this directly means you have to clean up memory yourself with Onigiri.cleanObject3d()!!!
     */
     Onigiri.getMesh = function (meshPath) {
-        if (!Bento.assets.hasMesh || !Bento.assets.getMesh) {
-            Utils.log('Onigiri: MeshManager is missing?!');
-            return;
-        }
         // check if mesh exists
-        if (meshPath || Bento.assets.hasMesh(meshPath)) {
-            return Bento.assets.getMesh(meshPath);
+        var mesh = Bento.assets.getMesh(meshPath);
+        if (mesh) {
+            return THREE.SkeletonUtils.clone(mesh);
         } else {
             if (!meshPath) {
                 Utils.log('Onigiri: mesh path is undefined!');
             } else {
                 Utils.log('Onigiri: mesh does not exist!');
             }
+        }
+    };
+
+    /* Get a THREE texture by Bento image name.
+     * Textures are cached on the image, in a way that's compatible with Bento's ThreeSprite
+    @snippet Onigiri.getTexture.snippet
+    Onigiri.getTexture('${1:path}');
+    */
+    Onigiri.getTexture = function (name) {
+        var img = Bento.assets.getImage(name);
+        if (img) {
+            var texture = img.image.texture;
+            if (!texture) {
+                texture = new THREE.Texture(img.image);
+                texture.flipY = false;
+                texture.needsUpdate = true;
+                img.image.texture = texture;
+            }
+            return texture;
+        } else {
+            Utils.log('Onigiri: Can\'t get texture for nonexistant image "' + name + '"');
+            return null;
         }
     };
 
@@ -403,7 +430,7 @@ bento.define('onigiri/onigiri', [
     };
 
     /* @snippet THREE.Vector2()|THREE.Vector2
-    THREE.Vector3(${1:0}, ${2:0})
+    THREE.Vector2(${1:0}, ${2:0})
     */
 
     /* @snippet THREE.Vector3()|THREE.Vector3
