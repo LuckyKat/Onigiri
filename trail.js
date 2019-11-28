@@ -203,7 +203,7 @@ bento.define('onigiri/trail', [
         return trail;
     };
     Trail.addToOnigiri = function () {
-        Onigiri.AnimationMixer = Trail;
+        Onigiri.Trail = Trail;
         console.log("Onigiri: added Onigiri.Trail");
     };
     return Trail;

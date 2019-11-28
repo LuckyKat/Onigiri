@@ -10,6 +10,8 @@ bento.define('onigiri/animationmixer', [
     Onigiri.AnimationMixer({
         object3D: $ {1},
         defaultAnimation: '${2}'
+        defaultAnimationWeight: 0,
+        loopAnimations: true
     }) */
     var AnimationMixer = function (settings) {
         // --- Parameters ---
@@ -30,10 +32,7 @@ bento.define('onigiri/animationmixer', [
             Utils.forEach(targetObject3D.animations, function (animation, i) {
                 var lastIndex = animation.name.lastIndexOf('|') + 1;
                 var animationName = animation.name.substring(lastIndex);
-                if (!animationName) {
-                    return;
-                }
-                if (!animation[animationName]) {
+                if (animationName && !animation[animationName]) {
                     actions[animationName] = mixer.clipAction(targetObject3D.animations[i]);
                     actions[animationName].setEffectiveWeight(defaultAnimationWeight);
                     actions[animationName].setEffectiveTimeScale(defaultAnimationSpeed);
@@ -68,6 +67,16 @@ bento.define('onigiri/animationmixer', [
                 actionInfo[animationName].weight = weight;
             }
         };
+        var setAnimationTime = function (animationName, time) {
+            if (!mixer) {
+                return;
+            }
+            //does the animation exist
+            var animationClip = actions[animationName];
+            if (animationClip) {
+                actions[animationName].time = time;
+            }
+        };
         var setAnimationSpeed = function (animationName, speed) {
             if (!mixer) {
                 return;
@@ -93,7 +102,7 @@ bento.define('onigiri/animationmixer', [
                     mixer = new THREE.AnimationMixer(targetObject3D);
                     //create a list of animations
                     processAnimations();
-                    //if we have a default animation if we have one
+                    //if we have a default animation enable it
                     if (defaultAnimation && this.hasAnimation(defaultAnimation)) {
                         setAnimationWeight(defaultAnimation, 1, true);
                     }
@@ -114,11 +123,20 @@ bento.define('onigiri/animationmixer', [
             getAnimations: function () {
                 return actions;
             },
-
             setCurrentTime: setCurrentTime,
             setAnimationWeight: setAnimationWeight,
+            setAnimationTime: setAnimationTime,
             setAnimationSpeed: setAnimationSpeed,
-            clearAnimations: function () {
+            play: function (name) {
+                actions[name].play();
+            },
+            stop: function (name, resetTime) {
+                actions[name].stop();
+                if (resetTime) {
+                    setAnimationTime(name, 0);
+                }
+            },
+            clear: function () {
                 mixer.stopAllAction();
             }
         };
