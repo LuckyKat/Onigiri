@@ -14,7 +14,7 @@ bento.define('onigiri/onigiri', [
     Utils
 ) {
     'use strict';
-    var VERSION = "v1.0.3";
+    var VERSION = "v1.0.4";
 
     // THREE object references
     var onigiriRenderer = null;
@@ -56,7 +56,7 @@ bento.define('onigiri/onigiri', [
         var perspectiveFieldOfView = cameraSettings.perspectiveFieldOfView || 45;
         var orthographicSize = cameraSettings.orthographicSize || 15;
 
-        var gamma = settings.gamma;  // if undefined, scene will use linear color space.
+        var gamma = settings.gamma; // if undefined, scene will use linear color space.
 
         // get references
         var viewport = Bento.getViewport();
