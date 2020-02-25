@@ -1,8 +1,8 @@
 /**
  * Clickable raycaster = ClickCaster
  * @moduleName ClickCaster
- * @snippet Onigiri.ClickCaster()|Component
-Onigiri.ClickCaster({})
+ * @snippet ClickCaster()|Component
+ClickCaster({})
  */
 bento.define('onigiri/clickcaster', [
     'bento',
@@ -140,7 +140,7 @@ Onigiri.ClickCaster({
         console.log("Onigiri: added Onigiri.ClickCaster");
     };
 
-    /* @snippet Onigiri.ClickCaster.defaultMesh|THREE.Mesh */
+    /* @snippet ClickCaster.defaultMesh|THREE.Mesh */
     var onigiriClickCasterMesh;
     Object.defineProperty(ClickCaster, 'defaultMesh', {
         get: function () {

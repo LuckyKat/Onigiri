@@ -1,3 +1,7 @@
+/**
+ * Helper module for collisions
+ * @moduleName Collider
+ */
 bento.define('onigiri/collider', [
     'bento',
     'bento/math/vector2',
@@ -329,8 +333,8 @@ collidesWith({
 
     /**
      * Makes a Box Collider Component, if a box isn't supplied it will be generated from the geometry of the entity3D it is attached to
-     * @snippet Onigiri.BoxCollider()|Collider
-        Onigiri.BoxCollider(new THREE.Box3(min, max));
+     * @snippet Collider.BoxCollider()|Collider
+        Collider.BoxCollider(new THREE.Box3(min, max));
      */
     var BoxCollider = function (box) {
         return new Collider({
@@ -340,8 +344,8 @@ collidesWith({
     };
     /** 
      * Makes a Sphere Collider Component, if a box isn't supplied it will be generated from the geometry of the entity3D it is attached to
-     * @snippet Onigiri.SphereCollider()|Collider
-        Onigiri.SphereCollider(new THREE.Sphere(center, radius));
+     * @snippet Collider.SphereCollider()|Collider
+        Collider.SphereCollider(new THREE.Sphere(center, radius));
     */
     var SphereCollider = function (sphere) {
         return new Collider({
@@ -351,8 +355,8 @@ collidesWith({
     };
     /** 
      * Makes a Plane Collider Component, if a shape isn't supplied it will be generated from the geometry of the entity3D it is attached to
-     * @snippet Onigiri.SphereCollider()|Collider
-        Onigiri.SphereCollider(new THREE.Sphere(center, radius));
+     * @snippet Collider.SphereCollider()|Collider
+        Collider.SphereCollider(new THREE.Sphere(center, radius));
     */
     var PlaneCollider = function (plane, width, height, offset) {
         return new Collider({

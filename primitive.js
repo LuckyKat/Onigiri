@@ -19,8 +19,8 @@ bento.define('onigiri/primitive', [
         'torus': THREE.TorusBufferGeometry,
     };
 
-    /* @snippet Onigiri.Primitive()|Circle
-    Onigiri.Primitive({
+    /* @snippet Primitive()|Circle
+    Primitive({
         shape: 'circle',
         position: new THREE.Vector3(0, 0, 0),
         rotation: new THREE.Euler(0, 0, 0),
@@ -36,8 +36,8 @@ bento.define('onigiri/primitive', [
         // disposeGeometry: true,
         // disposeMaterial: true
     });
-    * @snippet Onigiri.Primitive()|Cube
-    Onigiri.Primitive({
+    * @snippet Primitive()|Cube
+    Primitive({
         shape: 'cube',
         position: new THREE.Vector3(0, 0, 0),
         rotation: new THREE.Euler(0, 0, 0),
@@ -54,8 +54,8 @@ bento.define('onigiri/primitive', [
         disposeGeometry: true,
         disposeMaterial: true
     });
-     * @snippet Onigiri.Primitive()|Cone
-    Onigiri.Primitive({
+     * @snippet Primitive()|Cone
+    Primitive({
         shape: 'cone',
         position: new THREE.Vector3(0, 0, 0),
         rotation: new THREE.Euler(0, 0, 0),
@@ -72,8 +72,8 @@ bento.define('onigiri/primitive', [
         disposeGeometry: true,
         disposeMaterial: true
     });
-        * @snippet Onigiri.Primitive()|Sphere
-    Onigiri.Primitive({
+    * @snippet Primitive()|Sphere
+    Primitive({
         shape: 'sphere',
         position: new THREE.Vector3(0, 0, 0),
         rotation: new THREE.Euler(0, 0, 0),
@@ -91,8 +91,8 @@ bento.define('onigiri/primitive', [
         disposeGeometry: true,
         disposeMaterial: true
     });
-    * @snippet Onigiri.Primitive()|Cylinder
-    Onigiri.Primitive({
+    * @snippet Primitive()|Cylinder
+    Primitive({
         shape: 'cylinder',
         position: new THREE.Vector3(0, 0, 0),
         rotation: new THREE.Euler(0, 0, 0),
@@ -111,44 +111,44 @@ bento.define('onigiri/primitive', [
         disposeGeometry: true,
         disposeMaterial: true,
     });
-     * @snippet Onigiri.Primitive()|Torus
-Onigiri.Primitive({
-    shape: 'torus',
-    position: new THREE.Vector3(0, 0, 0),
-    rotation: new THREE.Euler(0, 0, 0),
-    scale: new THREE.Vector3(1, 1, 1),
-    parameters: [
-        ${1:1}, // radius - Radius of the torus, from the center of the torus to the center of the tube. Default is 1.
-        ${2:0.4}, // tube - Radius of the tube. Default is 0.4.
-        ${3:8}, // radialSegments
-        ${4:6} // tubularSegments
-        //true, // optional: arc - Central angle. Default is Math.PI * 2.
-    ],
-    // material: undefined,
-    disposeGeometry: true,
-    disposeMaterial: true
-});
-         * @snippet Onigiri.Primitive()|Plane
-Onigiri.Primitive({
-    shape: 'plane',
-    position: new THREE.Vector3(0, 0, 0),
-    rotation: new THREE.Euler(0, 0, 0),
-    scale: new THREE.Vector3(1, 1, 1),
-    parameters: [
-        ${1:1}, // width
-        ${2:1} // height
-        //1, // optional: widthSegments
-        //1, // optional: heightSegments
-    ],
-    // material: undefined,
-    disposeGeometry: true,
-    disposeMaterial: true,
-    // castShadow: true,
-    // receiveShadow: true
-});
+     * @snippet Primitive()|Torus
+    Primitive({
+        shape: 'torus',
+        position: new THREE.Vector3(0, 0, 0),
+        rotation: new THREE.Euler(0, 0, 0),
+        scale: new THREE.Vector3(1, 1, 1),
+        parameters: [
+            ${1:1}, // radius - Radius of the torus, from the center of the torus to the center of the tube. Default is 1.
+            ${2:0.4}, // tube - Radius of the tube. Default is 0.4.
+            ${3:8}, // radialSegments
+            ${4:6} // tubularSegments
+            //true, // optional: arc - Central angle. Default is Math.PI * 2.
+        ],
+        // material: undefined,
+        disposeGeometry: true,
+        disposeMaterial: true
+    });
+     * @snippet Primitive()|Plane
+    Primitive({
+        shape: 'plane',
+        position: new THREE.Vector3(0, 0, 0),
+        rotation: new THREE.Euler(0, 0, 0),
+        scale: new THREE.Vector3(1, 1, 1),
+        parameters: [
+            ${1:1}, // width
+            ${2:1} // height
+            //1, // optional: widthSegments
+            //1, // optional: heightSegments
+        ],
+        // material: undefined,
+        disposeGeometry: true,
+        disposeMaterial: true,
+        // castShadow: true,
+        // receiveShadow: true
+    });
      */
     var Primitive = function (settings) {
-        var geometry = settings.geometry ||new primitiveEnum[settings.shape](
+        var geometry = settings.geometry || new primitiveEnum[settings.shape](
             settings.parameters[0],
             settings.parameters[1],
             settings.parameters[2],

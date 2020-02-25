@@ -14,7 +14,7 @@ bento.define('onigiri/onigiri', [
     Utils
 ) {
     'use strict';
-    var VERSION = "v1.0.4";
+    var VERSION = "v1.0.5";
 
     // THREE object references
     var onigiriRenderer = null;
@@ -287,8 +287,10 @@ bento.define('onigiri/onigiri', [
         }
     };
 
-    /* @snippet Onigiri.cleanObject3d()|Snippet
-    Onigiri.cleanObject3d('${1:mesh}');
+    /**
+     * Disposes all geometries 
+     * @snippet Onigiri.cleanObject3d()|Snippet
+    Onigiri.cleanObject3d(${1:object3D});
     */
     Onigiri.cleanObject3d = function (obj3d) {
         obj3d.children.forEach(function (mesh) {
@@ -304,7 +306,7 @@ bento.define('onigiri/onigiri', [
     };
 
     /* @snippet Onigiri.getMesh()|THREE.Object3D
-    Onigiri.getMesh('${1:path}'); // calling this directly means you have to clean up memory yourself with Onigiri.cleanObject3d()!!!
+    Onigiri.getMesh('${1:path}');
     */
     Onigiri.getMesh = function (meshPath) {
         // check if mesh exists
@@ -344,7 +346,7 @@ bento.define('onigiri/onigiri', [
 
     /* Searches all of the parents of a specified object3D to find an anchoring entity3D, useful for getting an entity3D from a raycast result
     @snippet Onigiri.findParentEntity3D()|Entity3D
-    Onigiri.findParentEntity3D(Object3D);
+    Onigiri.findParentEntity3D(${1:Object3D});
     */
     Onigiri.findParentEntity3D = function (object3D) {
         var thisObject3D = object3D;
@@ -367,7 +369,7 @@ bento.define('onigiri/onigiri', [
     };
     /**
      * @snippet Onigiri.getMeshSize()|THREE.Vector3
-    Onigiri.getMeshSize()
+    Onigiri.getMeshSize(${1:object3D}))
      */
     Onigiri.getMeshSize = function (mesh) {
         var box = null;
@@ -428,6 +430,21 @@ bento.define('onigiri/onigiri', [
             end();
         }
     };
+
+    /**
+     * Projects a THREE.Vector3 to Bento world space
+     * @snippet Onigiri.projectToBento()|Vector2
+    Onigiri.projectToBento(${1:vector3})
+     */
+     Onigiri.projectToBento = function (threePos) {
+        var cameraPosition = threePos.project(Onigiri.camera);
+        var viewport = Bento.getViewport();
+        var worldPosition = new Vector2(
+            viewport.x + viewport.width / 2 + cameraPosition.x * viewport.width / 2,
+            viewport.y + viewport.height / 2 - cameraPosition.y * viewport.height / 2
+        );
+        return worldPosition;
+     };
 
     /* @snippet THREE.Vector2()|THREE.Vector2
     THREE.Vector2(${1:0}, ${2:0})

@@ -14,14 +14,14 @@ bento.define('onigiri/light', [
     Onigiri
 ) {
     'use strict';
-    /* @snippet Onigiri.Light()|Entity3D
-Onigiri.Light({
-    type: THREE.AmbientLight,
-    position: new THREE.Vector3(0, 0, 0),
-    rotation: new THREE.Vector3(0, 0, 0),
-    color: '#ffffff',
-    intensity: 1
-})
+    /* @snippet Light()|Entity3D
+    Light({
+        type: THREE.AmbientLight,
+        position: new THREE.Vector3(0, 0, 0),
+        rotation: new THREE.Vector3(0, 0, 0),
+        color: '#ffffff',
+        intensity: 1
+    })
     */
     var Light = function (settings) {
         // --- Parameters ---

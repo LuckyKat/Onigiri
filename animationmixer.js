@@ -1,3 +1,7 @@
+/**
+ * Helper module for mixing animations with different weights
+ * @moduleName AnimationMixer
+ */
 bento.define('onigiri/animationmixer', [
     'bento/utils',
     'onigiri/onigiri'
@@ -6,8 +10,8 @@ bento.define('onigiri/animationmixer', [
     Onigiri
 ) {
     'use strict';
-    /* @snippet AnimationMixer - Onigiri
-    Onigiri.AnimationMixer({
+    /* @snippet AnimationMixer|Constructor
+    AnimationMixer({
         object3D: $ {1},
         defaultAnimation: '${2}'
         defaultAnimationWeight: 0,
@@ -117,25 +121,61 @@ bento.define('onigiri/animationmixer', [
                 // update the animation
                 mixer.update((1 / 60) * currentAnimationSpeed * data.speed);
             },
+            /**
+             * @snippet #Animator.hasAnimation()|Boolean
+            hasAnimation('$1')
+             */
             hasAnimation: function (animation) {
                 return Utils.isDefined(actions[animation]);
             },
+            /**
+             * @snippet #Animator.getAnimations()|Array
+            getAnimations()
+             */
             getAnimations: function () {
                 return actions;
             },
+            /**
+             * @snippet #Animator.getCurrentTime()|Number
+            getCurrentTime()
+             */
             setCurrentTime: setCurrentTime,
+            /**
+             * @snippet #Animator.setAnimationWeight()|Snippet
+            setAnimationWeight('${1:name}', ${2:1})
+             */
             setAnimationWeight: setAnimationWeight,
+            /**
+             * @snippet #Animator.setAnimationTime()|Snippet
+            setAnimationTime('${1:name}', ${2:0})
+             */
             setAnimationTime: setAnimationTime,
+            /**
+             * @snippet #Animator.setAnimationSpeed()|Snippet
+            setAnimationSpeed('${1:name}', ${2:0})
+             */
             setAnimationSpeed: setAnimationSpeed,
+            /**
+             * @snippet #Animator.play()|Snippet
+            play()
+             */
             play: function (name) {
                 actions[name].play();
             },
+            /**
+             * @snippet #Animator.stop()|Snippet
+            stop()
+             */
             stop: function (name, resetTime) {
                 actions[name].stop();
                 if (resetTime) {
                     setAnimationTime(name, 0);
                 }
             },
+            /**
+             * @snippet #Animator.clear()|Snippet
+            clear()
+             */
             clear: function () {
                 mixer.stopAllAction();
             }

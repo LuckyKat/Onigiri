@@ -1,8 +1,6 @@
 /**
  * Entity 3D for Onigiri
  * @moduleName Entity3D
- * @snippet Entity3D|constructor
-Entity3D({})
  */
 bento.define('onigiri/entity3d', [
     'bento',
@@ -21,8 +19,8 @@ bento.define('onigiri/entity3d', [
     /* Intermeshes bento Entity and THREE.Object3D by creating a weird mutant hybrid, 
      * that handles hierarchical and transformational changes in THREE,  while retaining as many bento features as possible.
      * 2D transforms are entirely replaced by THREE transforms
-     * @snippet Onigiri.Entity3D()|Entity3D
-        Onigiri.Entity3D({
+     * @snippet Entity3D()|Constructor
+        Entity3D({
             name: '$1',
             family: [''],
             object3D: ${2:null}, // THREE.object3D reference
@@ -172,16 +170,16 @@ bento.define('onigiri/entity3d', [
     // expose to Onigiri
     Onigiri.Entity3D = Entity3D;
 
-    /* @snippet Onigiri.Mesh()|Entity3D
-Onigiri.Mesh({
-    mesh: ${1}, // direct mesh reference
-    path: '${2}', // path to mesh asset
-    position: new THREE.Vector3(0, 0, 0),
-    // disposeGeometry : true,
-    // disposeMaterial : true,
-    // castShadow: true,
-    // receiveShadow: true
-})
+    /* @snippet Mesh()|Entity3D
+    Mesh({
+        mesh: ${1}, // direct mesh reference
+        path: '${2}', // or use path to mesh asset
+        position: new THREE.Vector3(0, 0, 0),
+        // disposeGeometry : true,
+        // disposeMaterial : true,
+        // castShadow: true,
+        // receiveShadow: true
+    })
     */
     var Mesh = function (settings) {
         // --- Parameters ---

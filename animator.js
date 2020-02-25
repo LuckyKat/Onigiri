@@ -1,3 +1,13 @@
+/**
+ * Helper module for animations, helps blending between animations.
+ * More notes about this module: https://gist.github.com/exelotl/d28c3d2949f572e54ee5e7272e9f0cc9
+ * @moduleName Animator
+ * @snippet Animator|Constructor
+    Animator({
+        object3D: $ {1},
+        defaultAnimation: '${2}'
+    })
+ */
 bento.define('onigiri/animator', [
     'bento/utils',
     'onigiri/onigiri'
@@ -6,11 +16,6 @@ bento.define('onigiri/animator', [
     Onigiri
 ) {
     'use strict';
-    /* @snippet Animator - Onigiri
-    Onigiri.Animator({
-        object3D: $ {1},
-        defaultAnimation: '${2}'
-    }) */
     var Animator = function (settings) {
         // --- Parameters ---
         var targetObject3D = settings.object3D;
@@ -203,32 +208,73 @@ bento.define('onigiri/animator', [
                         }
                     }
                 }
-
-
             },
+            /**
+             * @snippet #Animator.hasAnimation()|Boolean
+            hasAnimation('$1')
+             */
             hasAnimation: function (animation) {
                 return Utils.isDefined(animations[animation]);
             },
+            /**
+             * @snippet #Animator.getAnimations()|Array
+            getAnimations()
+             */
             getAnimations: function () {
                 return animations;
             },
+            /**
+             * @snippet #Animator.setCurrentSpeed()|Snippet
+            setCurrentSpeed(${1:0})
+             */
             setCurrentSpeed: function (newSpeed) {
                 currentSpeed = newSpeed;
             },
+            /**
+             * @snippet #Animator.getCurrentTime()|Number
+            getCurrentTime()
+             */
             getCurrentTime: function () {
                 return currentAction.time;
             },
+            /**
+             * @snippet #Animator.setCurrentTime()|Snippet
+            setCurrentTime(${1:timeInSeconds})
+             */
             setCurrentTime: setCurrentTime,
+            /**
+             * @snippet #Animator.play()|Snippet
+            play(${1:0})
+             */
             play: setAnimation,
+            /**
+             * @snippet #Animator.stop()|Snippet
+            stop(${1:0})
+             */
             stop: stopAnimation,
+            /**
+             * @snippet #Animator.queue()|Snippet
+            queue(${1:0})
+             */
             queue: queueAnimation,
-
+            /**
+             * @snippet #Animator.getCurrentClip()|Snippet
+            getCurrentClip()
+             */
             getCurrentClip: function () {
                 return currentClip;
             },
+            /**
+             * @snippet #Animator.getCurrentClip()|THREE.AnimationClip
+            getCurrentClip()
+             */
             getCurrentAction: function () {
                 return currentAction;
             },
+            /**
+             * @snippet #Animator.getCurrentAnimation()|String
+            getCurrentAnimation()
+             */
             getCurrentAnimation: function () {
                 return currentAnimation;
             },
