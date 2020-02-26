@@ -6,12 +6,14 @@ bento.define('onigiri/onigiri', [
     'bento',
     'bento/entity',
     'bento/eventsystem',
-    'bento/utils'
+    'bento/utils',
+    'bento/math/vector2'
 ], function (
     Bento,
     Entity,
     EventSystem,
-    Utils
+    Utils,
+    Vector2
 ) {
     'use strict';
     var VERSION = "v1.0.5";
