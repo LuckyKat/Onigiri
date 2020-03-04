@@ -49,7 +49,7 @@ bento.define('onigiri/sprite3d', [
     PlaneSprite.prototype.destroy = function (data) {};
     PlaneSprite.prototype.draw = function () {
         var origin = this.origin;
-        var plane = this.planeMesh;
+        var mesh = this.mesh;
         var currentFrame = Math.round(this.currentFrame);
         var currentAnimation = this.currentAnimation;
 
@@ -71,8 +71,9 @@ bento.define('onigiri/sprite3d', [
 
         // origin: to achieve this offset effect, we move the plane (child of the object3d)
         // take into account that threejs already assumes middle of the mesh to be origin
-        plane.position.x = -(origin.x - this.frameWidth / 2);
-        plane.position.y = (origin.y - this.frameHeight / 2);
+        mesh.position.x = -origin.x;
+        mesh.position.y = origin.y - this.frameHeight;
+
     };
 
     /**
