@@ -2,9 +2,9 @@
  * Helper module for animations, helps blending between animations.
  * More notes about this module: https://gist.github.com/exelotl/d28c3d2949f572e54ee5e7272e9f0cc9
  * @moduleName Animator
- * @snippet Animator|Constructor
+ * @snippet Animator()|Constructor
     Animator({
-        object3D: $ {1},
+        object3D: ${1},
         defaultAnimation: '${2}'
     })
  */

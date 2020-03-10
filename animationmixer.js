@@ -10,10 +10,10 @@ bento.define('onigiri/animationmixer', [
     Onigiri
 ) {
     'use strict';
-    /* @snippet AnimationMixer|Constructor
+    /* @snippet AnimationMixer()|Constructor
     AnimationMixer({
-        object3D: $ {1},
-        defaultAnimation: '${2}'
+        object3D: ${1},
+        defaultAnimation: '${2}',
         defaultAnimationWeight: 0,
         loopAnimations: true
     }) */
@@ -122,49 +122,49 @@ bento.define('onigiri/animationmixer', [
                 mixer.update((1 / 60) * currentAnimationSpeed * data.speed);
             },
             /**
-             * @snippet #Animator.hasAnimation()|Boolean
+             * @snippet #AnimationMixer.hasAnimation()|Boolean
             hasAnimation('$1')
              */
             hasAnimation: function (animation) {
                 return Utils.isDefined(actions[animation]);
             },
             /**
-             * @snippet #Animator.getAnimations()|Array
+             * @snippet #AnimationMixer.getAnimations()|Array
             getAnimations()
              */
             getAnimations: function () {
                 return actions;
             },
             /**
-             * @snippet #Animator.getCurrentTime()|Number
+             * @snippet #AnimationMixer.getCurrentTime()|Number
             getCurrentTime()
              */
             setCurrentTime: setCurrentTime,
             /**
-             * @snippet #Animator.setAnimationWeight()|Snippet
+             * @snippet #AnimationMixer.setAnimationWeight()|Snippet
             setAnimationWeight('${1:name}', ${2:1})
              */
             setAnimationWeight: setAnimationWeight,
             /**
-             * @snippet #Animator.setAnimationTime()|Snippet
+             * @snippet #AnimationMixer.setAnimationTime()|Snippet
             setAnimationTime('${1:name}', ${2:0})
              */
             setAnimationTime: setAnimationTime,
             /**
-             * @snippet #Animator.setAnimationSpeed()|Snippet
+             * @snippet #AnimationMixer.setAnimationSpeed()|Snippet
             setAnimationSpeed('${1:name}', ${2:0})
              */
             setAnimationSpeed: setAnimationSpeed,
             /**
-             * @snippet #Animator.play()|Snippet
-            play()
+             * @snippet #AnimationMixer.play()|Snippet
+            play('${1:name}')
              */
             play: function (name) {
                 actions[name].play();
             },
             /**
-             * @snippet #Animator.stop()|Snippet
-            stop()
+             * @snippet #AnimationMixer.stop()|Snippet
+            stop('${1:name}')
              */
             stop: function (name, resetTime) {
                 actions[name].stop();
@@ -173,7 +173,7 @@ bento.define('onigiri/animationmixer', [
                 }
             },
             /**
-             * @snippet #Animator.clear()|Snippet
+             * @snippet #AnimationMixer.clear()|Snippet
             clear()
              */
             clear: function () {

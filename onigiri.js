@@ -292,7 +292,7 @@ bento.define('onigiri/onigiri', [
     /**
      * Disposes all geometries 
      * @snippet Onigiri.cleanObject3d()|Snippet
-    Onigiri.cleanObject3d(${1:object3D});
+    Onigiri.cleanObject3d(${1:object3D})
     */
     Onigiri.cleanObject3d = function (obj3d) {
         obj3d.children.forEach(function (mesh) {
@@ -308,7 +308,7 @@ bento.define('onigiri/onigiri', [
     };
 
     /* @snippet Onigiri.getMesh()|THREE.Object3D
-    Onigiri.getMesh('${1:path}');
+    Onigiri.getMesh('${1:path}')
     */
     Onigiri.getMesh = function (meshPath) {
         // check if mesh exists
@@ -326,16 +326,21 @@ bento.define('onigiri/onigiri', [
 
     /* Get a THREE texture by Bento image name.
      * Textures are cached on the image, in a way that's compatible with Bento's ThreeSprite
-    @snippet Onigiri.getTexture.snippet
-    Onigiri.getTexture('${1:path}');
+    @snippet Onigiri.getTexture()|THREE.Texture
+    Onigiri.getTexture('${1:path}')
     */
-    Onigiri.getTexture = function (name) {
+    Onigiri.getTexture = function (name, textureSettings) {
         var img = Bento.assets.getImage(name);
         if (img) {
             var texture = img.image.texture;
             if (!texture) {
                 texture = new THREE.Texture(img.image);
-                texture.flipY = false;
+                texture.flipY = false; // default to false
+                if (textureSettings) {
+                    Utils.forEach(textureSettings, function (value, key) {
+                        texture[key] = value;
+                    });
+                }
                 texture.needsUpdate = true;
                 img.image.texture = texture;
             }
@@ -348,7 +353,7 @@ bento.define('onigiri/onigiri', [
 
     /* Searches all of the parents of a specified object3D to find an anchoring entity3D, useful for getting an entity3D from a raycast result
     @snippet Onigiri.findParentEntity3D()|Entity3D
-    Onigiri.findParentEntity3D(${1:Object3D});
+    Onigiri.findParentEntity3D(${1:Object3D})
     */
     Onigiri.findParentEntity3D = function (object3D) {
         var thisObject3D = object3D;
