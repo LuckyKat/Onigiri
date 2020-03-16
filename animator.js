@@ -2,7 +2,7 @@
  * Helper module for animations, helps blending between animations.
  * More notes about this module: https://gist.github.com/exelotl/d28c3d2949f572e54ee5e7272e9f0cc9
  * @moduleName Animator
- * @snippet Animator()|Constructor
+ * @snippet Animator|Constructor
     Animator({
         object3D: ${1},
         defaultAnimation: '${2}'
@@ -20,6 +20,7 @@ bento.define('onigiri/animator', [
         // --- Parameters ---
         var targetObject3D = settings.object3D;
         var defaultAnimation = settings.defaultAnimation;
+        var onFinish = settings.onFinish;
 
         // --- Variables ---
         var mixer;
@@ -165,9 +166,15 @@ bento.define('onigiri/animator', [
                 } else {
                     Utils.log('Onigiri.Animator: No animations on Object3D!');
                 }
+                if (onFinish) {
+                    mixer.addEventListener('finished', onFinish);
+                }
             },
             destroy: function (data) {
                 mixer.stopAllAction();
+                if (onFinish) {
+                    mixer.removeEventListener('finished', onFinish);
+                }
             },
             update: function (data) {
                 if (!mixer) {

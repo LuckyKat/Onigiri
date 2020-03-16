@@ -1,8 +1,6 @@
 /**
  * Clickable raycaster = ClickCaster
  * @moduleName ClickCaster
- * @snippet ClickCaster()|Component
-ClickCaster({})
  */
 bento.define('onigiri/clickcaster', [
     'bento',
@@ -118,8 +116,8 @@ bento.define('onigiri/clickcaster', [
     /* Raycasts from the camera position to the pointer position on screen, checking against a specific mesh.
      * By Default it casts against 'onigiriClickCasterMesh' which is a huge invisible plane, attached to the scene on creation on Onigiri.
      * Can be used as a replacement for the Clickable concept, but has a more limited usage due to THREE's restrictions on casting.
-     * @snippet ClickCaster|Clickable
-Onigiri.ClickCaster({
+     * @snippet ClickCaster()|Constructor
+ClickCaster({
     raycastMesh: undefined, // THREE.Mesh - used as an overide from the default
     pointerDownCast: function (data) {
         if (data.castData) {

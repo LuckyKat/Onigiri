@@ -326,8 +326,7 @@ bento.define('onigiri/onigiri', [
 
     /* Get a THREE texture by Bento image name.
      * Textures are cached on the image, in a way that's compatible with Bento's ThreeSprite
-    @snippet Onigiri.getTexture()|THREE.Texture
-    Onigiri.getTexture('${1:path}')
+    Onigiri.getTexture('${1:imageName}', {$2})
     */
     Onigiri.getTexture = function (name, textureSettings) {
         var img = Bento.assets.getImage(name);
@@ -335,7 +334,7 @@ bento.define('onigiri/onigiri', [
             var texture = img.image.texture;
             if (!texture) {
                 texture = new THREE.Texture(img.image);
-                texture.flipY = false; // default to false
+                texture.flipY = false;
                 if (textureSettings) {
                     Utils.forEach(textureSettings, function (value, key) {
                         texture[key] = value;
