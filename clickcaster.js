@@ -31,7 +31,7 @@ bento.define('onigiri/clickcaster', [
                 ((screenPosition.x / viewport.width) - 0.5) * 2,
                 ((screenPosition.y / viewport.height) - 0.5) * -2
             );
-            raycaster.setFromCamera(castPos, Onigiri.camera);
+            raycaster.setFromCamera(castPos, Onigiri.camera.object3D);
 
             //check if we hit the mesh
             var intersects;
