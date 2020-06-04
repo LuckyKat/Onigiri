@@ -39,11 +39,11 @@ bento.define('onigiri/onigiri', [
         pxToThree: 1,
         gamma: 2.2,
         backgroundColor: ${1:0x70b0e4},
-        camera: {
-            cameraStyle: '${2:perspective}', // or orthographic
+        camera: new Onigiri.Camera({
+            style: '${2:perspective}', // or orthographic
             perspectiveFieldOfView: ${3:45},
             orthographicSize: ${4:15},
-        },
+        }),
         shadows: ${4:false}
         // backgroundPath: 'path',
         // skyBox: ['path/positivex', 'path/negativex', 'path/positivey', 'path/negativey', 'path/positivez', 'path/negativex'],
@@ -52,20 +52,14 @@ bento.define('onigiri/onigiri', [
     })
     */
     var Onigiri = function (settings) {
-        // camera parameters
-        var cameraSettings = settings.camera || {};
-        var cameraStyle = cameraSettings.cameraStyle || 'perspective';
-        var perspectiveFieldOfView = cameraSettings.perspectiveFieldOfView || 45;
-        var orthographicSize = cameraSettings.orthographicSize || 15;
+        //TODO this creates a dependency that we're not too happy about. What is a good solution?
+        var camera = settings.camera || new Onigiri.Camera({});
 
         var gamma = settings.gamma; // if undefined, scene will use linear color space.
 
         // get references
-        var viewport = Bento.getViewport();
         var ThreeData = Bento.getRenderer().three;
-        var isLandscape = (viewport.width / viewport.height) > 1;
         var isDebug = Bento.isDev();
-
 
         var component = new Object({
             name: 'behavior',
@@ -74,10 +68,9 @@ bento.define('onigiri/onigiri', [
 
                 ThreeData.sceneList.unshift({
                     scene: onigiriScene,
-                    camera: onigiriCamera,
+                    camera: camera.object3D,
                     gamma: gamma,
                 });
-                EventSystem.on('resize', updateCamera);
                 if (isDebug) {
                     EventSystem.on('buttonDown-home', printDebug);
                 }
@@ -88,7 +81,6 @@ bento.define('onigiri/onigiri', [
                 if (isDebug) {
                     EventSystem.off('buttonDown-home', printDebug);
                 }
-                EventSystem.off('resize', updateCamera);
                 onigiriScene.dispose();
                 if (skyCubeMap) {
                     skyCubeMap.dispose();
@@ -96,10 +88,6 @@ bento.define('onigiri/onigiri', [
                 if (backgroundTexture) {
                     backgroundTexture.dispose();
                 }
-            },
-            update: function (data) {
-                // update camera frustum
-                Onigiri.camera.frustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(Onigiri.camera.projectionMatrix, Onigiri.camera.matrixWorldInverse));
             }
         });
         /**
@@ -121,41 +109,6 @@ bento.define('onigiri/onigiri', [
                 })
             );
         };
-        var updateCamera = function () {
-            viewport = Bento.getViewport();
-            var thisAspect = viewport.width / viewport.height;
-            isLandscape = thisAspect > 1;
-            if (cameraStyle === 'perspective') {
-                onigiriCamera.fov = perspectiveFieldOfView * (isLandscape ? (viewport.height / 480) : (viewport.height / 640));
-                onigiriCamera.aspect = viewport.width / viewport.height;
-            }
-            if (cameraStyle === 'orthographic') {
-                var thisWidth = isLandscape ? (orthographicSize) : (orthographicSize * thisAspect);
-                var thisHeight = isLandscape ? (orthographicSize / thisAspect) : (orthographicSize);
-                onigiriCamera.left = -thisWidth * 0.5;
-                onigiriCamera.right = thisWidth * 0.5;
-                onigiriCamera.top = thisHeight * 0.5;
-                onigiriCamera.bottom = -thisHeight * 0.5;
-            }
-            onigiriCamera.updateProjectionMatrix();
-        };
-        var createCamera = function () {
-            // setup camera
-            if (cameraStyle === 'perspective') {
-                onigiriCamera = new THREE.PerspectiveCamera(perspectiveFieldOfView * (isLandscape ? (viewport.height / 480) : (viewport.height / 640)), viewport.width / viewport.height, 0.1, 1000);
-            }
-            if (cameraStyle === 'orthographic') {
-                var aspect = viewport.width / viewport.height;
-                var width = isLandscape ? (orthographicSize) : (orthographicSize * aspect);
-                var height = isLandscape ? (orthographicSize / aspect) : (orthographicSize);
-                onigiriCamera = new THREE.OrthographicCamera(-width * 0.5, width * 0.5, height * 0.5, -height * 0.5, 0.1, 1000);
-            }
-            // Custom Value pertaining to the camera frustrum
-            onigiriCamera.frustum = new THREE.Frustum();
-
-            // this is needed to attach stuff to the camera
-            onigiriScene.add(onigiriCamera);
-        };
 
         // set up conversion variables
         if (settings.threeToPx) {
@@ -174,10 +127,11 @@ bento.define('onigiri/onigiri', [
 
         // set up scene
         onigiriScene = new THREE.Scene();
-        createCamera();
+        onigiriScene.add(camera.object3D);
+        onigiri.attach(camera); //camera is an entity and needs to be updated
 
         Onigiri.scene = onigiriScene;
-        Onigiri.camera = onigiriCamera;
+        Onigiri.camera = camera;
         Onigiri.renderer = onigiriRenderer;
 
         // fog

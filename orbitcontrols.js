@@ -22,7 +22,7 @@ bento.define('onigiri/orbitcontrols', [
             name: 'behavior',
             controls: null,
             start: function () {
-                this.controls = new THREE.OrbitControls(Onigiri.camera, Bento.getCanvas());
+                this.controls = new THREE.OrbitControls(Onigiri.camera.object3D, Bento.getCanvas());
                 this.controls.target = target;
             },
             destroy: function () {
