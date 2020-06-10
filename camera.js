@@ -3,43 +3,41 @@
  * @moduleName Camera
  * @snippet Onigiri.Camera|constructor
 Onigiri.Camera({
-	style: '${1:perspective}', // or orthographic
-	perspectiveFieldOfView: ${2:45},
-	orthographicSize: ${3:15},
-	nearClippingPlane : ${4:0.1},
-	farClippingPlane : ${5:1000},
-	autoModifyFieldOfView : ${6:true} //if kept true, the field of view will be modified based on the screenratio (taller screens get a higher FoV).
+    style: '${1:perspective}', // or orthographic
+    perspectiveFieldOfView: ${2:45},
+    orthographicSize: ${3:15},
+    nearClippingPlane : ${4:0.1},
+    farClippingPlane : ${5:1000},
+    autoModifyFieldOfView : ${6:true} //if kept true, the field of view will be modified based on the screenratio (taller screens get a higher FoV).
 })
  */
 bento.define('onigiri/camera', [
     'bento',
     'bento/utils',
-
     'onigiri/onigiri',
     'bento/entity',
     'bento/eventsystem'
 ], function (
     Bento,
     Utils,
-
     Onigiri,
     Entity,
     EventSystem
 ) {
     'use strict';
     var Camera = function (settings) {
-        var style = Utils.defaultValue(settings.style, 'perspective');
+        var style = Utils.getDefault(settings.style, 'perspective');
 
         var viewport = Bento.getViewport();
         var aspectRatio = viewport.width / viewport.height;
         var isLandscape = aspectRatio > 1;
 
-        var perspectiveFoV = Utils.defaultValue(settings.perspectiveFieldOfView, 45);
-        var orthographicSize = Utils.defaultValue(settings.orthographicSize, 15);
-        var autoModifyFoV = Utils.defaultValue(settings.autoModifyFieldOfView, true); //TODO needs a better property name
+        var perspectiveFoV = Utils.getDefault(settings.perspectiveFieldOfView, 45);
+        var orthographicSize = Utils.getDefault(settings.orthographicSize, 15);
+        var autoModifyFoV = Utils.getDefault(settings.autoModifyFieldOfView, true); //TODO needs a better property name
 
-        var nearClippingPlane = Utils.defaultValue(settings.nearClippingPlane, 0.1);
-        var farClippingPlane = Utils.defaultValue(settings.farClippingPlane, 1000);
+        var nearClippingPlane = Utils.getDefault(settings.nearClippingPlane, 0.1);
+        var farClippingPlane = Utils.getDefault(settings.farClippingPlane, 1000);
 
         var _camera;
 
