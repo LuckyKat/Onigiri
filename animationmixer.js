@@ -4,10 +4,12 @@
  */
 bento.define('onigiri/animationmixer', [
     'bento/utils',
-    'onigiri/onigiri'
-], function (
+    'onigiri/onigiri',
+    'bento/tween'
+], function(
     Utils,
-    Onigiri
+    Onigiri,
+    Tween
 ) {
     'use strict';
     /* @snippet AnimationMixer()|Constructor
@@ -17,13 +19,12 @@ bento.define('onigiri/animationmixer', [
         defaultAnimationWeight: 0,
         loopAnimations: true
     }) */
-    var AnimationMixer = function (settings) {
+    var AnimationMixer = function(settings) {
         // --- Parameters ---
         var targetObject3D = settings.object3D;
-        var defaultAnimation = settings.defaultAnimation;
-        var defaultAnimationWeight = settings.defaultAnimationWeight || 0;
-        var defaultAnimationSpeed = settings.defaultAnimationSpeed || 1;
-        var loopAnimations = Utils.getDefault(settings.loopAnimations, true);
+        var playOnStart = settings.playOnStart || [];
+        var onAnimationFinished = settings.onAnimationFinished;
+        var afterUpdate = settings.afterUpdate;
 
         // --- Variables ---
         var mixer;
@@ -32,25 +33,35 @@ bento.define('onigiri/animationmixer', [
         var actionInfo = {};
 
         // --- Functions ---
-        var processAnimations = function () {
-            Utils.forEach(targetObject3D.animations, function (animation, i) {
+        var processAnimations = function() {
+            Utils.forEach(targetObject3D.animations, function(animation, i) {
                 var lastIndex = animation.name.lastIndexOf('|') + 1;
                 var animationName = animation.name.substring(lastIndex);
                 if (animationName && !animation[animationName]) {
                     actions[animationName] = mixer.clipAction(targetObject3D.animations[i]);
-                    actions[animationName].setEffectiveWeight(defaultAnimationWeight);
-                    actions[animationName].setEffectiveTimeScale(defaultAnimationSpeed);
-                    actions[animationName].setLoop(loopAnimations ? THREE.LoopRepeat : THREE.LoopOnce, Infinity);
+                    actions[animationName].setEffectiveWeight(1);
+                    actions[animationName].setEffectiveTimeScale(1);
+                    actions[animationName].setLoop(THREE.LoopOnce, Infinity);
                     actions[animationName].clampWhenFinished = true;
                     actionInfo[animationName] = {
-                        weight: defaultAnimationWeight,
-                        speed: defaultAnimationSpeed
+                        weight: 1,
+                        speed: 1,
+                        loop: false
                     };
-                    actions[animationName].play();
                 }
             });
         };
-        var setCurrentTime = function (timeInSeconds) {
+        var handleAnimationFinished = function(e) {
+            var data = {
+                action: e.action,
+                mixer: e.target,
+                clip: e.action.getClip()
+            };
+            if (onAnimationFinished) {
+                onAnimationFinished(data);
+            }
+        };
+        var setCurrentTime = function(timeInSeconds) {
             if (!mixer) {
                 return;
             }
@@ -60,7 +71,7 @@ bento.define('onigiri/animationmixer', [
             }
             return mixer.update(timeInSeconds); // Update used to set exact time. Returns "this" AnimationMixer object.
         };
-        var setAnimationWeight = function (animationName, weight) {
+        var setAnimationWeight = function(animationName, weight) {
             if (!mixer) {
                 return;
             }
@@ -71,7 +82,7 @@ bento.define('onigiri/animationmixer', [
                 actionInfo[animationName].weight = weight;
             }
         };
-        var setAnimationTime = function (animationName, time) {
+        var setAnimationTime = function(animationName, time) {
             if (!mixer) {
                 return;
             }
@@ -81,7 +92,7 @@ bento.define('onigiri/animationmixer', [
                 actions[animationName].time = time;
             }
         };
-        var setAnimationSpeed = function (animationName, speed) {
+        var setAnimationSpeed = function(animationName, speed) {
             if (!mixer) {
                 return;
             }
@@ -92,97 +103,156 @@ bento.define('onigiri/animationmixer', [
                 actionInfo[animationName].speed = speed;
             }
         };
+        var setAnimationLoop = function(animationName, loop) {
+            if (!mixer) {
+                return;
+            }
+            //does the animation exist
+            var animationClip = actions[animationName];
+            if (animationClip) {
+                actions[animationName].setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, Infinity);
+                actionInfo[animationName].loop = loop;
+            }
+        };
 
         // --- Component ---
         var mixerComponent = {
             name: 'mixerComponent',
-            start: function (data) {
-                // find the relevant object3D if it doesn't exist
-                if (!targetObject3D) {
-                    targetObject3D = this.parent.object3D;
-                }
-                if (targetObject3D.animations) {
-                    //make a new animation mixer
-                    mixer = new THREE.AnimationMixer(targetObject3D);
-                    //create a list of animations
-                    processAnimations();
-                    //if we have a default animation enable it
-                    if (defaultAnimation && this.hasAnimation(defaultAnimation)) {
-                        setAnimationWeight(defaultAnimation, 1, true);
-                    }
-                } else {
-                    Utils.log('Onigiri.Animator: No animations on Object3D!');
-                }
+            start: function(data) {
+                mixer.addEventListener('finished', handleAnimationFinished);
             },
-            update: function (data) {
+            destroy: function() {
+                mixer.removeEventListener('finished', handleAnimationFinished);
+            },
+            update: function(data) {
                 if (!mixer) {
                     return;
                 }
                 // update the animation
                 mixer.update((1 / 60) * currentAnimationSpeed * data.speed);
+                if (afterUpdate) {
+                    afterUpdate();
+                }
             },
             /**
              * @snippet #AnimationMixer.hasAnimation()|Boolean
             hasAnimation('$1')
              */
-            hasAnimation: function (animation) {
+            hasAnimation: function(animation) {
                 return Utils.isDefined(actions[animation]);
             },
             /**
              * @snippet #AnimationMixer.getAnimations()|Array
             getAnimations()
              */
-            getAnimations: function () {
+            getAnimations: function() {
                 return actions;
             },
             /**
-             * @snippet #AnimationMixer.getCurrentTime()|Number
-            getCurrentTime()
+             * @snippet #AnimationMixer.getActionInfo()|Object
+            getActionInfo()
              */
-            setCurrentTime: setCurrentTime,
+            getActionInfo: function(name) {
+                return actionInfo[name];
+            },
             /**
-             * @snippet #AnimationMixer.setAnimationWeight()|Snippet
-            setAnimationWeight('${1:name}', ${2:1})
+             * @snippet #AnimationMixer.setAllTime()|Number
+            setAllTime()
              */
-            setAnimationWeight: setAnimationWeight,
+            setAllTime: setCurrentTime,
             /**
-             * @snippet #AnimationMixer.setAnimationTime()|Snippet
-            setAnimationTime('${1:name}', ${2:0})
+             * @snippet #AnimationMixer.setWeight()|Snippet
+            setWeight('${1:name}', ${2:1})
              */
-            setAnimationTime: setAnimationTime,
+            setWeight: setAnimationWeight,
             /**
-             * @snippet #AnimationMixer.setAnimationSpeed()|Snippet
-            setAnimationSpeed('${1:name}', ${2:0})
+             * @snippet #AnimationMixer.setTime()|Snippet
+            setTime('${1:name}', ${2:0})
              */
-            setAnimationSpeed: setAnimationSpeed,
+            setTime: setAnimationTime,
+            /**
+             * @snippet #AnimationMixer.setSpeed()|Snippet
+            setSpeed('${1:name}', ${2:0})
+             */
+            setSpeed: setAnimationSpeed,
+            /**
+             * @snippet #AnimationMixer.setLoop()|Snippet
+            setLoop('${1:name}', ${2:0})
+             */
+            setLoop: setAnimationLoop,
             /**
              * @snippet #AnimationMixer.play()|Snippet
             play('${1:name}')
              */
-            play: function (name) {
+            play: function(name, resetTime) {
+                if (resetTime) {
+                    actions[name].reset();
+                }
                 actions[name].play();
+            },
+            /**
+             * @snippet #AnimationMixer.crossFade()|Snippet
+            crossFade('${1:name}', ${2:0}, ${3:function () {}})
+             */
+            crossFade: function(to, overTime, onComplete) {
+                actions[to].reset();
+                actions[to].play();
+                new Tween({
+                    from: 0,
+                    to: 1,
+                    in: overTime,
+                    ease: 'linear',
+                    onUpdate: function(v, t) {
+                        Utils.forEach(Object.keys(actions), function(actionName, i, l, breakLoop) {
+                            if (actionName === to) {
+                                return;
+                            }
+                            setAnimationWeight(actionName, Math.min(1 - v, actionInfo[actionName].weight));
+                        });
+                        setAnimationWeight(to, Math.max(v, actionInfo[to].weight));
+                    },
+                    onComplete: onComplete
+                });
             },
             /**
              * @snippet #AnimationMixer.stop()|Snippet
             stop('${1:name}')
              */
-            stop: function (name, resetTime) {
+            stop: function(name) {
                 actions[name].stop();
-                if (resetTime) {
-                    setAnimationTime(name, 0);
-                }
             },
             /**
              * @snippet #AnimationMixer.clear()|Snippet
             clear()
              */
-            clear: function () {
+            clear: function() {
                 mixer.stopAllAction();
             }
         };
+
+        // Setup
+        if (targetObject3D) {
+            if (targetObject3D.animations) {
+                //make a new animation mixer
+
+                mixer = new THREE.AnimationMixer(targetObject3D);
+                //create a list of animations
+                processAnimations();
+
+                //if we have a default animation enable it
+                Utils.forEach(playOnStart, function(animation, i, l, breakLoop) {
+                    mixerComponent.play(animation);
+                });
+            } else {
+                Utils.log('Onigiri.Animator: No animations on Object3D!');
+            }
+        } else {
+            Utils.log('Onigiri.Animator: No Object3D!');
+        }
+
         return mixerComponent;
     };
-    AnimationMixer.addToOnigiri = function () {
+    AnimationMixer.addToOnigiri = function() {
         Onigiri.AnimationMixer = AnimationMixer;
         console.log("Onigiri: added Onigiri.AnimationMixer");
     };
